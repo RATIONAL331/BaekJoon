@@ -1,3 +1,12 @@
+# Debug
+[Dd]ebug/
+
+# Database
+.db
+
+# Visual Studio temp files
+.vs
+
 # Prerequisites
 *.d
 
