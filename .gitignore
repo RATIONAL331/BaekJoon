@@ -1,14 +1,3 @@
-
-
-[Dd]ebug/
-
-
-*.db
-
-
-*.vs
-
-
 # Prerequisites
 *.d
 

@@ -1,6 +1,6 @@
 #include<iostream>
 #include<deque>
-int getPos(std::deque<int> Deque, int findNumber) {
+int getPos(std::deque<int>& Deque, int findNumber) {
 	int pos = 0;
 	for (int num : Deque) {
 		if (num == findNumber) return pos;
