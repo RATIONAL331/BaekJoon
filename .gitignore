@@ -2,10 +2,10 @@
 [Dd]ebug/
 
 # Database
-.db
+*.db
 
 # Visual Studio temp files
-.vs
+*.vs
 
 # Prerequisites
 *.d
