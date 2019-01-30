@@ -6,6 +6,7 @@
 
 # Visual Studio temp files
 *.vs
+.vs/
 
 # Prerequisites
 *.d
