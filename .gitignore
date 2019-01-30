@@ -1,12 +1,20 @@
 # Debug
 [Dd]ebug/
 
+# EXE
+x86/
+x64/
+
 # Database
 *.db
 
 # Visual Studio temp files
 *.vs
-/.vs/
+vs/
+*.vs/
+
+# Log
+*.log
 
 # Prerequisites
 *.d
@@ -23,6 +31,7 @@
 
 # Compiled Dynamic libraries
 *.so
+*.suo
 *.dylib
 *.dll
 
