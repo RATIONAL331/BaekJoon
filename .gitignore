@@ -11,6 +11,7 @@ x64/
 # Visual Studio temp files
 *.vs
 vs/
+/vs/
 *.vs/
 
 # Log
