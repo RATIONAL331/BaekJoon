@@ -7,8 +7,10 @@ int getMax(int* arr, int n) {
 	}
 	return max;
 }
+// 계산하기
 void calculate(int * numArr, int * dp, int A, int B) {
 	for (int i = A; i <= B; i++) {
+		// 1 ~ n-1 까지의 합은 dp[n-1]이라 할때 dp[n] = dp[n-1] + a[i]이고, 이 값이 음수라면 생각할 필요도 없다.
 		if (dp[i - 1] < 0) dp[i] = numArr[i];
 		else dp[i] = dp[i - 1] + numArr[i];
 	}
