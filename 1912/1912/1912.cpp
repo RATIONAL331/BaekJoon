@@ -13,7 +13,6 @@ void calculate(int * numArr, int * dp, int A, int B) {
 		else dp[i] = dp[i - 1] + numArr[i];
 	}
 }
- // 메모리 제한 해결하기
 int main() {
 	int n;
 	std::cin >> n;
