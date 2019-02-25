@@ -25,7 +25,7 @@ void cal(int N, int L) {
 				i++;
 			}
 		}
-		else cal(N, L + 1);
+		else return cal(N, L + 1);
 	}
 }
 int main() {
