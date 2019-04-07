@@ -35,6 +35,7 @@ int main() {
 		std::cout << retArr[i] + 1 << "\n";
 	}
 
+	delete[] retArr;
 	delete[] visitNode;
 	delete[] treeArr;
 
