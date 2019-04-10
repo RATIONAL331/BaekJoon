@@ -1,28 +1,47 @@
 #include<iostream>
 #include<algorithm>
 #include<string>
-void visit(int** board, int curY, int curX, int height, int weight, int beforeElem) {
-	if (curY < 0 || curY >= height || curX < 0 || curX >= weight) {
-		return;
-	}
-	if (board[curY][curX] == 0) {
-		return;
-	}
+#include<queue>
+bool checkLine(int** board, int weight, int height, int curX, int curY) {
+	if (curX < 0 || curY < 0 || curX >= weight || curY >= height) return false;
+	if (board[curY][curX] == 0) return false;
+	return true;
+}
+void bfs(int** board, int weight, int height, int curX, int curY) {
+	if (!checkLine(board, weight, height, curX, curY)) return;
+	std::queue<std::pair<int, int>> queue;
+	queue.push(std::make_pair(curX, curY));
 
-	if (board[curY][curX] > 1) {
-		board[curY][curX] = std::min(board[curY][curX], beforeElem + 1);
-		return;
+	std::pair<int, int> popElem;
+	while (!queue.empty()) {
+		popElem = queue.front();
+		queue.pop();
+		
+		int popX = popElem.first;
+		int popY = popElem.second;
+
+		// 아래쪽
+		if (checkLine(board, weight, height, popX, popY + 1) && board[popY + 1][popX] == 1) {
+			board[popY + 1][popX] = board[popY][popX] + 1;
+			queue.push(std::make_pair(popX, popY + 1));
+		}
+		// 오른쪽
+		if (checkLine(board, weight, height, popX + 1, popY) && board[popY][popX + 1] == 1) {
+			board[popY][popX + 1] = board[popY][popX] + 1;
+			queue.push(std::make_pair(popX + 1, popY));
+		}
+		// 위쪽
+		if (checkLine(board, weight, height, popX, popY - 1) && board[popY - 1][popX] == 1) {
+			board[popY - 1][popX] = board[popY][popX] + 1;
+			queue.push(std::make_pair(popX, popY - 1));
+		}
+		// 왼쪽
+		if (checkLine(board, weight, height, popX - 1, popY) && board[popY][popX  - 1] == 1) {
+			board[popY][popX - 1] = board[popY][popX] + 1;
+			queue.push(std::make_pair(popX - 1, popY));
+		}
 	}
-
-	if (board[curY][curX] == 1){
-		board[curY][curX] += beforeElem;
-	}
-
-	visit(board, curY + 1, curX, height, weight, board[curY][curX]);
-	visit(board, curY, curX + 1, height, weight, board[curY][curX]);
-	visit(board, curY - 1, curX, height, weight, board[curY][curX]);
-	visit(board, curY, curX - 1, height, weight, board[curY][curX]);
-
+	
 }
 int main() {
 	int N, M;
@@ -40,8 +59,8 @@ int main() {
 			board[i][j] = input.at(j) - '0';
 		}
 	}
+	bfs(board, M, N, 0, 0);
 
-	visit(board, 0, 0, N, M, 0);
 	std::cout<<board[N - 1][M - 1];
 
 	return 0;
