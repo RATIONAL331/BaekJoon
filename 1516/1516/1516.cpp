@@ -1,37 +1,23 @@
 #include<iostream>
 #include<vector>
-void visitListInit(bool* arr, int n) {
-	for (int i = 0; i < n; i++) {
-		arr[i] = false;
-	}
-}
-// bfs로 풀어보자
-void dfs(std::vector<int>* vec, bool* visitList, int* buildingList, int visitNode, int* retList, int original) {
-	if (visitList[visitNode]) return;
-	visitList[visitNode] = true;
-	for (int adjacentNode : vec[visitNode]) {
-		if (!visitList[adjacentNode]) {
-			dfs(vec, visitList, buildingList, adjacentNode, retList, original);
-		}
-	}
-	retList[original] += buildingList[visitNode];
-}
+#include<queue>
 int main() {
 	int N;
 	std::cin >> N;
 
-	bool* visitList = new bool[N];
+	int* degreeNode = new int[N];
 	int* buildingTimeList = new int[N];
 	int* retList = new int[N];
 	std::vector<int>* buildingVec = new std::vector<int>[N];
-
-	// 결과 배열 초기화
-	for (int i = 0; i < N; i++)
+	// 배열 초기화
+	for (int i = 0; i < N; i++) {
+		degreeNode[i] = 0;
 		retList[i] = 0;
+	}
 
 	// 입력 받기
 	int buildingTime, linkNode;
-	for(int i=0; i<N; i++) {
+	for (int i = 0; i < N; i++) {
 		// 설치시간 입력받기
 		std::cin >> buildingTime;
 		buildingTimeList[i] = buildingTime;
@@ -39,19 +25,40 @@ int main() {
 		while (true) {
 			std::cin >> linkNode;
 			if (linkNode == -1) break;
-			buildingVec[i].push_back(linkNode - 1);
+			buildingVec[linkNode - 1].push_back(i);
+			degreeNode[i]++;
 		}
 	}
+	// bfs 수행
+	std::queue<int> que;
 	for (int i = 0; i < N; i++) {
-		visitListInit(visitList, N);
-		dfs(buildingVec, visitList, buildingTimeList, i, retList, i);
+		// 진입차수가 0인 노드 부터 탐색
+		if (degreeNode[i] == 0)
+			que.push(i);
+		retList[i] += buildingTimeList[i];
 	}
-		
+
+	int popNode;
+	while (!que.empty()) {
+		popNode = que.front();
+		que.pop();
+
+		for (int adjacentNode : buildingVec[popNode]) {
+			retList[adjacentNode] = std::max(retList[adjacentNode], retList[popNode] + buildingTimeList[adjacentNode]);
+			degreeNode[adjacentNode]--;
+			if (degreeNode[adjacentNode] == 0) {
+				que.push(adjacentNode);
+			}
+		}
+	}
+
 	for (int i = 0; i < N; i++) {
 		std::cout << retList[i] << std::endl;
 	}
 
-	delete[] visitList;
+	delete[] retList;
+	delete[] buildingTimeList;
+	delete[] degreeNode;
 	delete[] buildingVec;
 	return 0;
 }
