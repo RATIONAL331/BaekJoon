@@ -1,49 +1,65 @@
 #include<iostream>
 #include<vector>
-int main() {
-	int V, E;
-	int startNode;
+#include<queue>
 
-	std::cin >> V >> E >> startNode;
-	// 그래프 생성
-	int** graph = new int* [V];
-	for (int i = 0; i < V; i++) {
-		graph[i] = new int[V];
-	}
-	// 방문 리스트 생성 및 무한대로 초기화
-	int* visitList = new int[V];
-	for (int i = 0; i < V; i++) {
-		visitList[i] = INT32_MAX;
-	}
-	// 그래프 0으로 초기화 
-	for (int i = 0; i < V; i++) {
-		for (int j = 0; j < V; j++) {
-			graph[i][j] = 0;
-		}
-	}
-	// 그래프 입력받기
-	int fromNode, toNode, distance;
-	for (int i = 0; i < E; i++) {
-		std::cin >> fromNode;
-		std::cin >> toNode;
-		std::cin >> distance;
+const int INF = 987654321;
 
-		if (graph[fromNode - 1][toNode - 1] == 0) {
-			graph[fromNode - 1][toNode - 1] = distance;
-		}
-		else {
-			if (distance < graph[fromNode - 1][toNode - 1]) {
-				graph[fromNode - 1][toNode - 1] = distance;
+class Node {
+public:
+	int node;
+	int cost;
+
+	Node() : Node(0, 0) {}
+	Node(int node, int cost) {
+		this->node = node;
+		this->cost = cost;
+	}
+
+	bool operator< (const Node& linkedNode) const {
+		return cost > linkedNode.cost;
+	}
+};
+void dijkstra(std::vector<Node>* graph, int* distanceList, int startNode, int nodeCount) {
+	std::priority_queue<Node> pqNode;
+	pqNode.push(Node(startNode, 0));
+	distanceList[startNode] = 0;
+
+	while (!pqNode.empty()) {
+		Node curNode = pqNode.top();
+		pqNode.pop();
+		for (Node adjacentNode : graph[curNode.node]) {
+			if (distanceList[curNode.node] + adjacentNode.cost < distanceList[adjacentNode.node]) {
+				distanceList[adjacentNode.node] = distanceList[curNode.node] + adjacentNode.cost;
+				pqNode.push(adjacentNode);
 			}
 		}
 	}
-	/*
-	그래프값이 0이라면 fromNode부터 toNode까지 가는 길이 없는 것을 의미한다.
-	그래프의 값이 0이 아닌 값이 있으면 fromNode부터 toNode까지 가는 길이 있고 그 값이 경로로 가는 길이다.
-	*/
+	
+}
+int main() {
+	int V, E, startNode;
+	std::cin >> V >> E >> startNode;
 
-	//방문 리스트의 첫번째 시작점은 0으로 한다.
-	visitList[startNode - 1] = 0;
+	int* distanceList = new int[V];
+	std::vector<Node>* graph = new std::vector<Node>[V];
 
+	int u, v, w;
+	
+	for (int i = 0; i < E; i++) {
+		scanf_s("%d %d %d", &u, &v, &w);
+		graph[u - 1].push_back(Node(v - 1, w));
+			
+	}
+	for (int i = 0; i < V; i++) {
+		distanceList[i] = INF;
+	}
+	dijkstra(graph, distanceList, startNode - 1, V);
+
+	for (int i = 0; i < V; i++) {
+		if (distanceList[i] == INF) printf("INF\n");
+		else printf("%d\n", distanceList[i]);
+	}
+	delete[] distanceList;
+	delete[] graph;
 	return 0;
 }
