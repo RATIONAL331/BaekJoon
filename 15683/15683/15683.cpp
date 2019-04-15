@@ -1,10 +1,13 @@
 #include<iostream>
 #include<vector>
-std::vector<int> getPermutation(std::vector<int>&  vec, int start, int N) {
-	if (start == N) return vec;
-	for (int i = 0; i < N; i++) {
+void perm(std::vector<std::vector<int>>& permutation, std::vector<int>& vec, int start, int N) {
+	if (start == N) {
+		permutation.push_back(vec);
+		return;
+	}
+	for (int i = 0; i < 4; i++) {
 		vec.push_back(i);
-		getPermutation(vec, start+1, N);
+		perm(permutation, vec, start + 1, N);
 		vec.pop_back();
 	}
 }
@@ -16,7 +19,7 @@ int goRight(int** board, int height, int width, int curY, int curX, bool change)
 		return goRight(board, height, width, curY, curX + 1, change);
 	}
 	if (board[curY][curX] == 0) {
-
+		if (change) board[curY][curX] = -1;
 		return 1 + goRight(board, height, width, curY, curX + 1, change);
 	}
 	return 0;
@@ -28,7 +31,7 @@ int goLeft(int** board, int height, int width, int curY, int curX, bool change) 
 		return goLeft(board, height, width, curY, curX - 1, change);
 	}
 	if (board[curY][curX] == 0) {
-
+		if (change) board[curY][curX] = -1;
 		return 1 + goLeft(board, height, width, curY, curX - 1, change);
 	}
 	return 0;
@@ -41,7 +44,7 @@ int goDown(int** board, int height, int width, int curY, int curX, bool change) 
 	}
 	
 	if (board[curY][curX] == 0) {
-
+		if (change) board[curY][curX] = -1;
 		return 1 + goDown(board, height, width, curY + 1, curX, change);
 	}
 	return 0;
@@ -53,7 +56,7 @@ int goUp(int** board, int height, int width, int curY, int curX, bool change) {
 		return goUp(board, height, width, curY - 1, curX, change);
 	}
 	if (board[curY][curX] == 0) {
-
+		if (change) board[curY][curX] = -1;
 		return 1 + goUp(board, height, width, curY - 1, curX, change);
 	}
 	return 0;
@@ -88,7 +91,13 @@ int visit(int** board, int height, int width, int curY, int curX, int cameraDegr
 		return goRight(board, height, width, curY, curX, change) + goDown(board, height, width, curY, curX, change) + goLeft(board, height, width, curY, curX, change) + goUp(board, height, width, curY, curX, change);
 	}
 }
-
+void init(int** board, int height, int width) {
+	for (int i = 0; i < height; i++) {
+		for (int j = 0; j < width; j++) {
+			if (board[i][j] == -1) board[i][j] = 0;
+		}
+	}
+}
 class Camera {
 public:
 	int posX, posY;
@@ -129,26 +138,25 @@ int main() {
 		}
 	}
 
-	std::vector<std::vector<int>> perm;
+	std::vector<std::vector<int>> permVec;
 	std::vector<int> temp;
-	perm.push_back(getPermutation(temp, 0, cameraPositionVec.size()));
+	perm(permVec, temp, 0, cameraPositionVec.size());
+	
+	int ret = -1;
+	for (std::vector<int> vec : permVec) {
+		int camDirectionIndex = 0;
+		int change = 0;
 
-	for (Camera camera : cameraPositionVec) {
-		int ret = -1;
-		int retDirection = -1;
-
-		for (int i = 0; i < 4; i++) {
-			int temp = visit(board, N, M, camera.posY, camera.posX, camera.cameraDegree, i, false);
-			if (ret < temp) {
-				ret = temp;
-				retDirection = i;
-			}
+		for (Camera cam : cameraPositionVec) {
+			cam.direct = vec[camDirectionIndex++];
+			change += visit(board, N, M, cam.posY, cam.posX, cam.cameraDegree, cam.direct, true);
 		}
-		visit(board, N, M, camera.posY, camera.posX, camera.cameraDegree, retDirection, true);
-		zeroCount -= ret;
+		if (ret < change) ret = change;		
+		init(board, N, M);
 	}
+	
+	std::cout << zeroCount - ret;
 
-	std::cout << zeroCount;
 
 	for (int i = 0; i < N; i++) {
 		delete[] board[i];
