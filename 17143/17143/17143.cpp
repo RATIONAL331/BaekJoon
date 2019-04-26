@@ -10,10 +10,17 @@ public:
 	int zYew;
 
 	bool operator< (const Shark& compareShark) const {
-		if (posX < compareShark.posX) 
+		if (posX < compareShark.posX)
 			return true;
-		else
-			return false;
+		else if (posX == compareShark.posX)
+			if (posY < compareShark.posY)
+				return true;
+			else if (posY == compareShark.posY)
+				if (zYew < compareShark.zYew)
+					return true;
+				else return false;
+			else return false;
+		else return false;
 	}
 
 	Shark() : Shark(0, 0, 0, 0, 0) { /*empty construction */ }
@@ -88,42 +95,28 @@ int main() {
 		sharkArr.push_back(Shark(r, c, s, d, z));
 	}
 
-	std::sort(sharkArr.begin(), sharkArr.end());
 	// 1번째 열부터 검사한다.
 	int count = 0;
 	for (int pivot = 1; pivot <= C; pivot++) {
 		// 가장 위의 것 찾기
-		int tmp = -1;
-		int min = R + 1;
+		std::sort(sharkArr.begin(), sharkArr.end());
 		for (int i = 0; i < sharkArr.size(); i++) {
 			if (sharkArr[i].posX == pivot) {
-				if (min > sharkArr[i].posY) {
-					min = sharkArr[i].posY;
-					tmp = i;
-				}
+				count += sharkArr[i].zYew;
+				sharkArr[i] = Shark();
+				break;
 			}
-		}
-		// 무게수 늘리기
-		if (tmp != -1) {
-			count += sharkArr[tmp].zYew;
-			// 가장 위의 것 초기화 하기
-			sharkArr[tmp] = Shark();
-		}
+		}	
 		// 모든 상어에 대해서 움직인다.
-		for (Shark shark : sharkArr) {
+		for (Shark& shark : sharkArr) {
 			shark.move(R, C);
 		}
 		// 정렬한다.
 		std::sort(sharkArr.begin(), sharkArr.end());
 		// 겹치는 부분이 있다면 제거한다.
 		for (int i = 0; i < sharkArr.size() - 1; i++) {
-			if (sharkArr[i].posX == sharkArr[i + 1].posX) {
-				if (sharkArr[i].posY == sharkArr[i + 1].posY) {
-					if (sharkArr[i].zYew < sharkArr[i + 1].zYew)
-						sharkArr[i] = Shark();
-					else
-						sharkArr[i + 1] = Shark();
-				}
+			if (sharkArr[i].posX == sharkArr[i + 1].posX && sharkArr[i].posY == sharkArr[i + 1].posY) {
+				sharkArr[i] = Shark();
 			}
 		}
 	}
