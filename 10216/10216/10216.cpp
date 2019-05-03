@@ -1,11 +1,14 @@
 #include<iostream>
-#include<cmath>
+#include<vector>
 using namespace std;
 class Circle {
 public:
 	int posX;
 	int posY;
 	int radius;
+
+	vector<int> adjacent;
+
 	Circle(int x = 0, int y = 0, int R = 0)
 	:posX(x), posY(y), radius(R)
 	{
@@ -29,16 +32,16 @@ void parenting(int* arr, int nodeA, int nodeB) {
 	arr[parentA] = parentB;
 }
 
-void dfs(int* parentArr, bool* visitArr, int node, int parent, Circle* circleArr) {
-	// 방문했다면 리턴
+void dfs(Circle* circleArr, int* parentArr, bool* visitArr, int node, int parent) {
 	if (visitArr[node]) return;
 
 	visitArr[node] = true;
-	if (circleArr[parent].isInside(circleArr[node])) {
-		parenting(parentArr, node, parent);
-		dfs(parentArr, visitArr, parentArr[node], node, circleArr);
+	parenting(parentArr, node, parent);
+	for (int adj : circleArr[node].adjacent) {
+		dfs(circleArr, parentArr, visitArr, adj, parent);
 	}
 }
+
 int main() {
 	int T;
 	cin >> T;
@@ -58,35 +61,41 @@ int main() {
 			int x, y, R;
 			cin >> x >> y >> R;
 			circleArr[circleInput] = Circle(x, y, R);
-			
-			int size = circleInput + 1;
-			bool* visitArr = new bool[size];
-			for (int i = 0; i < circleInput; i++)
-				visitArr[i] = false;
-			visitArr[circleInput] = true;
-			// 입력받은 원과 0 부터 입력받기 바로 전 원을 차례로 비교하여 포함되는지 확인한다.
-			for (int i = 0; i < circleInput; i++) {
-				// 포함이 된다면 비교하는 원의 부모를 입력받은 원으로 설정한다.
-				// i번째 원의 부모를 입력받은 원으로 바꾼다.
-				dfs(parentArr, visitArr, i, circleInput, circleArr);
+
+			// 원들 간의 관계를 저장해 둔다.
+			for (int adjacenting = 0; adjacenting < circleInput; adjacenting++) {
+				// 새로 들어온 원을 기존에 입력된 원들과 비교해가면서
+				// 기존의 원과 겹치는 부분이 있다면 서로 연결한다.
+				if (circleArr[circleInput].isInside(circleArr[adjacenting])) {
+					circleArr[circleInput].adjacent.push_back(adjacenting);
+					circleArr[adjacenting].adjacent.push_back(circleInput);
+				}
 			}
-			delete[] visitArr;
+		}
+		bool* visitArr = new bool[N];
+		for (int visitInit = 0; visitInit < N; visitInit++)
+			visitArr[visitInit] = false;
+		// 원의 관계 파악하면서 0번째 원부터 차례대로 연결되어 있는 원들을 방문하면서 그들을 자신의 부모로 바꾼다.
+		for (int parentingIdx = 0; parentingIdx < N; parentingIdx++) {
+			dfs(circleArr, parentArr, visitArr, parentingIdx, parentingIdx);
 		}
 
-		bool* ret = new bool[N];
-		for (int i = 0; i < N; i++) {
-			ret[i] = false;
-		}
-
+		bool* retArr = new bool[N];
+		for (int retInit = 0; retInit < N; retInit++)
+			retArr[retInit] = false;
+		
 		int ans = 0;
-		for (int i = 0; i < N; i++) {
-			if (ret[parentArr[i]] == false) {
-				ret[parentArr[i]] = true;
+		for (int reting = 0; reting < N; reting++) {
+			if (retArr[parentArr[reting]] == false) {
+				retArr[parentArr[reting]] = true;
 				ans++;
-			}		
+			}
 		}
-		cout << ans << endl;
-		delete[] ret;
+
+		printf("%d\n", ans);
+
+		delete[] retArr;
+		delete[] visitArr;
 		delete[] parentArr;
 		delete[] circleArr;
 	}
