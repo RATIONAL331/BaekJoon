@@ -9,14 +9,12 @@ int solve(int N, int K) {
 	int& ret = dp[N];
 	if (ret != -1) return ret;
 
-	ret = 0;
 	if (N < 0) return 987654321;
 	if (N > 100000) return 987654321;
 
 	if (N == K) return ret = 0;
 	if (N < K) {
-		ret = min(solve(N - 1, K) + 1, min(solve(N + 1, K) + 1, solve(N * 2, K) + 1));
-		return ret;
+		
 	}
 	else return ret = N - K;
 }
