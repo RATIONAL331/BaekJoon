@@ -1,3 +1,43 @@
+//#include<iostream>
+//#include<queue>
+//using namespace std;
+//
+//bool visited[100001];
+//int bfs(int N, int K) {
+//	queue<pair<int, int>> q;
+//	q.push({ N, 0 });
+//	visited[N] = true;
+//	
+//	while (!q.empty()) {
+//		auto popelem = q.front(); q.pop();
+//		int curPos = popelem.first;
+//		int curTime = popelem.second;
+//		
+//		if (curPos == K) return curTime;
+//		
+//		if (curPos + 1 <= 100000 && !visited[curPos + 1]) {
+//			visited[curPos + 1] = true;
+//			q.push({ curPos + 1, curTime + 1 });
+//		}
+//		if (curPos - 1 >= 0 && !visited[curPos - 1]) {
+//			visited[curPos - 1] = true;
+//			q.push({ curPos - 1, curTime + 1 });
+//		}
+//		if (curPos * 2 <= 100000 && !visited[curPos * 2]) {
+//			visited[curPos * 2] = true;
+//			q.push({ curPos * 2, curTime + 1 });
+//		}
+//	}
+//	return 987654321;
+//}
+//
+//int main() {
+//	int N, K;
+//	cin >> N >> K;
+//	cout << bfs(N, K);
+//	return 0;
+//}
+
 #include<iostream>
 #include<queue>
 #include<algorithm>
@@ -13,6 +53,7 @@ int solve(int N, int K) {
 	if (N > 100000) return 987654321;
 
 	if (N == K) return ret = 0;
+	ret = N - K;
 	if (N < K) {
 		
 	}
@@ -28,41 +69,3 @@ int main() {
 
 	return 0;
 }
-
-//#define _CRT_SECURE_NO_WARNINGS
-//#include <cstdio>
-//#include <algorithm>
-//using namespace std;
-//
-//int n, k, d[100001];
-//
-//int main() {
-//	scanf("%d %d", &n, &k);
-//	if (n > k) {
-//		printf("%d\n", n - k);
-//		return 0;
-//	}
-//	d[n] = 0;
-//	if (n == 0)
-//		d[n + 1] = 1;
-//	else
-//		d[n - 1] = d[n + 1] = 1;
-//
-//	// Modified
-//	int idx = n - 2, tmp = 2;
-//	while (idx >= 0) {
-//		d[idx] = tmp;
-//		idx--;
-//		tmp++;
-//	}
-//	// End
-//
-//	for (int i = n + 2; i <= k + 1; i++) {
-//		if (i % 2 == 0) d[i] = min(d[i - 1] + 1, d[i / 2] + 1);
-//		else d[i] = d[i - 1] + 1;
-//		d[i - 1] = min(d[i - 1], d[i] + 1);
-//	}
-//	printf("%d", d[k]);
-//	return 0;
-//}
-
