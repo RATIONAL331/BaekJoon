@@ -12,12 +12,10 @@ int main() {
 		cin >> arr[i];
 
 	int sum = 0;
-	int total = 0;
 	int idx = N - 1;
-	while (total < K) {
-		total += (K / arr[idx]) * arr[idx];
+	while (K > 0) {
 		sum += K / arr[idx];
-		K = K - (K / arr[idx]) * arr[idx];
+		K -= (K / arr[idx]) * arr[idx];
 		idx--;
 	}
 
