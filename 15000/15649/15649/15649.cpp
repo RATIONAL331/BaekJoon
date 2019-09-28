@@ -2,11 +2,10 @@
 #include<vector>
 using namespace std;
 
-bool* check;
-vector<int> vec;
 int N, M;
+bool* check;
 
-void execNM(int idx) {
+void solve(vector<int>& vec, int idx) {
 	if (idx == M) {
 		for (auto& elem : vec) cout << elem << " ";
 		cout << '\n';
@@ -16,7 +15,7 @@ void execNM(int idx) {
 		if (check[i - 1] == false) {
 			check[i - 1] = true;
 			vec[idx] = i;
-			execNM(idx + 1);
+			solve(vec, idx + 1);
 			check[i - 1] = false;
 		}
 	}
@@ -24,9 +23,11 @@ void execNM(int idx) {
 
 int main() {
 	cin >> N >> M;
-	vec.resize(M);
+	
+	vector<int> vec(M);
 	check = new bool[N]();
-	execNM(0);
+	solve(vec, 0);
+
 	delete[] check;
 	return 0;
 }
