@@ -1,4 +1,4 @@
-#include<cstdio>
+#include<iostream>
 #include<vector>
 using namespace std;
 
@@ -16,8 +16,12 @@ void nodeUnion(Node* parent, Node* child) {
 }
 
 int main() {
+	ios_base::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+
 	int n, m;
-	scanf("%d %d", &n, &m);
+	cin >> n >> m;
 
 	vector<Node> nodeVec(n + 1);
 	for (int i = 0; i < n + 1; i++)
@@ -25,7 +29,7 @@ int main() {
 
 	int proceduer, parent, child;
 	while (m--) {
-		scanf("%d %d %d", &proceduer, &parent, &child);
+		cin >> proceduer >> parent >> child;
 		switch (proceduer) {
 		case 0:
 			// 합집합
@@ -34,9 +38,9 @@ int main() {
 		case 1:
 			// 포함 확인하기
 			if (findParent(&nodeVec[parent]) == findParent(&nodeVec[child]))
-				printf("YES\n");
+				cout << "YES\n";
 			else
-				printf("NO\n");
+				cout << "NO\n";
 			break;
 		}
 	}
