@@ -61,7 +61,7 @@ int main() {
 				}
 			}
 		}
-		cout << graph[W - 1].second << endl;
+		cout << graph[W - 1].second << '\n';
 	}
 	return 0;
 }
