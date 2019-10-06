@@ -1,13 +1,27 @@
 #include<iostream>
+#include<algorithm>
 #include<vector>
 using namespace std;
+int N, K;
 
-int dp[101][101];
+int dp[100][100'001];
+int solve(vector<pair<int, int>>& vec, int start, int weight) {
+	if (start >= N || weight > K) return 0;
+
+	int& ret = dp[start][weight];
+	if (ret != 0) return ret;
+
+	// 포함하지 않는 경우
+	ret = solve(vec, start + 1, weight);
+	// 포함하는 경우
+	if (weight + vec[start].first <= K) {
+		ret = max(ret, solve(vec, start + 1, weight + vec[start].first) + vec[start].second);
+	}
+	return ret;
+}
 
 int main() {
-	int N, K;
 	cin >> N >> K;
-
 	vector<pair<int, int>> vec(N);
 
 	int W, V;
@@ -15,8 +29,6 @@ int main() {
 		cin >> W >> V;
 		vec[i] = { W, V };
 	}
-
-	// 1 2 3 4, 12, 13, 14, 23, 24, 34, 123, 124, 134, 1234
-
+	cout << solve(vec, 0, 0);
 	return 0;
 }
