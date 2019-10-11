@@ -26,8 +26,7 @@ int main() {
 	cout.tie(nullptr);
 
 	cin >> N >> R >> Q;
-	tree.resize(N);
-	dp.resize(N);
+	vector<vector<int>> tree(N);
 
 	int U, V;
 	for (int i = 0; i < N - 1; i++) {
@@ -35,7 +34,6 @@ int main() {
 		tree[U - 1].push_back(V - 1);
 		tree[V - 1].push_back(U - 1);
 	}
-	solve(R - 1);
 
 	dp.resize(N);
 	visited.resize(N);
@@ -46,7 +44,7 @@ int main() {
 	int solveNode;
 	for (int i = 0; i < Q; i++) {
 		cin >> solveNode;
-		cout << solve(tree, solveNode - 1) << endl;
+		cout << solve(tree, solveNode - 1) << '\n';
 	}
 
 	return 0;
