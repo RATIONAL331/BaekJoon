@@ -1,13 +1,3 @@
-/*
-6
-1 2 3 4 1 6
-7 8 9 1 4 2
-2 3 4 1 1 3
-6 6 6 6 9 4
-9 1 9 1 9 5
-1 1 1 1 9 9
-*/
-
 #include<iostream>
 #include<algorithm>
 using namespace std;
@@ -30,19 +20,81 @@ bool check(int x, int y, int d1, int d2) {
 }
 
 int leftUp(int** arr, int x, int y, int d1, int d2) {
+	int sum = 0;
 
+	int tmp = y;
+	for (int i = 0; i < x + d1; i++) {	
+		tmp = (i >= x ? tmp - 1 : tmp);
+		for (int j = 0; j <= tmp; j++) {
+			sum += arr[i][j];
+		}	
+	}
+
+	return sum;
 }
 int rightUp(int** arr, int x, int y, int d1, int d2) {
-
+	int sum = 0;
+	
+	int tmp = y + 1;
+	for (int i = 0; i <= x + d2; i++) {	
+		tmp = (i > x ? tmp + 1 : tmp);
+		for (int j = N - 1; j >= tmp; j--) {
+			sum += arr[i][j];
+		}		
+	}
+	return sum;
 }
 int midCenter(int** arr, int x, int y, int d1, int d2) {
+	int sum = 0;
+	
+	int cnt = 1;
+	int tmp = 1;
+	int y_pos = y;
+	for (int i = x; i <= x + d1 + d2; i++) {
+		for (int j = y_pos; j < y_pos + tmp; j++) {
+			sum += arr[i][j];
+		}
+		if (cnt <= d1) {
+			tmp++;
+			y_pos--;
+		}
+		else {
+			y_pos++;
+			tmp--;
+		}
+		if (cnt <= d2) tmp++;
+		else tmp--;
 
+		cnt++;
+	}
+
+	return sum;
 }
 int leftDown(int** arr, int x, int y, int d1, int d2) {
+	int sum = 0;
 
+	int tmp = y - d1 - 1;
+	for (int i = x + d1; i < N; i++) {
+		for (int j = 0; j <= tmp; j++) {
+			sum += arr[i][j];
+		}
+		tmp = (i >= x + d1 + d2 ? tmp : tmp + 1);
+	}
+
+	return sum;
 }
 int rightDown(int** arr, int x, int y, int d1, int d2) {
+	int sum = 0;
 
+	int tmp = y + d2;
+	for (int i = x + d2 + 1; i < N; i++) {		
+		for (int j = N - 1; j >= tmp; j--) {
+			sum += arr[i][j];
+		}	
+		tmp = (i <= x + d1 + d2 ? tmp - 1 : tmp);
+	}
+	
+	return sum;
 }
 
 int main() {
@@ -85,6 +137,7 @@ int main() {
 
 	/* PRINT Phase */
 	cout << result;
+
 	/* FINAL Phase */
 	for (int i = 0; i < N; i++)
 		delete[] board[i];
