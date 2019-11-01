@@ -7,6 +7,9 @@ using namespace std;
 
 int N, M, T;
 
+int CNT;
+int SUM;
+
 const int INF_MIN = INT32_MIN;
 
 const int dy[4] = { -1, 0, 1, 0 };
@@ -39,14 +42,19 @@ void changeAdjacent(vector<deque<int>>& circle, int order, int pos, bool& isAdj)
 			if (visited[newOrder][newPos] == false && circle[newOrder][newPos] == cmpNum) {
 				visited[newOrder][newPos] = true;
 				que.push({ newOrder, newPos });
+
+				SUM -= circle[newOrder][newPos];
 				circle[newOrder][newPos] = INF_MIN;
 				
+				CNT--;
 				isChange = true;
 			}
 		}		
 	}
 
 	if (isChange == true) {
+		SUM -= circle[order][pos];
+		CNT--;
 		circle[order][pos] = INF_MIN;
 		isAdj = true;
 	}		
@@ -61,27 +69,19 @@ void checkAdjacent(vector<deque<int>>& circle, bool& isAdj) {
 	}
 }
 
-pair<int, int> getSumAndCnt(vector<deque<int>>& circle) {
-	int sum = 0, cnt = 0;
-	for (int i = 0; i < N; i++) {
-		for (int j = 0; j < M; j++) {
-			if (circle[i][j] != INF_MIN) {
-				sum += circle[i][j];
-				cnt++;
-			}
-		}
-	}
-	return { sum, cnt };
-}
-
 void avgPlusMinus(vector<deque<int>>& circle, double avg) {
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < M; j++) {
 			if (circle[i][j] != INF_MIN) {
-				if (circle[i][j] > avg)
+				if (circle[i][j] > avg) {
+					SUM -= 1;
 					circle[i][j] -= 1;
-				else if (circle[i][j] < avg)
+				}
+				else if (circle[i][j] < avg) {
+					SUM += 1;
 					circle[i][j] += 1;
+				}
+					
 			}
 		}
 	}
@@ -101,6 +101,8 @@ int main() {
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < M; j++) {
 			cin >> number;
+			SUM += number;
+			CNT++;
 			circle[i].push_back(number);
 		}
 	}
@@ -129,9 +131,8 @@ int main() {
 		checkAdjacent(circle, isAdjacent);
 		if (isAdjacent == false) {
 			double avg;
-			pair<int, int> sumAndCnt = getSumAndCnt(circle);
-			if (sumAndCnt.second != 0)
-				avg = (double)sumAndCnt.first / sumAndCnt.second;
+			if (CNT != 0)
+				avg = (double)SUM / CNT;
 			else avg = 0;
 
 			avgPlusMinus(circle, avg);
@@ -147,9 +148,7 @@ int main() {
 	//	}
 	//	cout << endl;
 	//}
-
-	pair<int, int> result = getSumAndCnt(circle);
-	cout << result.first;
+	cout << SUM;
 
 	return 0;
 }
