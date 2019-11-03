@@ -14,7 +14,7 @@ bool check(int x, int y, int d1, int d2) {
 	// CASE 3
 	if (x + d1 + d2 >= N || y - d1 + d2 >= N || y - d1 + d2 < 0) return false;
 	// CASE 4
-	if (x + d1 + d2 >= N || y + d2 - d1 >= N || y + d2 - d1 < 0) return false;
+	if (x + d1 + d2 >= N || y + d1 - d2 >= N || y + d1 - d2 < 0) return false;
 
 	return true;
 }
