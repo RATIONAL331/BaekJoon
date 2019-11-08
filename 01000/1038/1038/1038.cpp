@@ -1,32 +1,26 @@
 #include<iostream>
+#include<algorithm>
+using namespace std;
 
-bool isDecreasing(long long n) {
-	bool isDecrease = true;
-
-	int beforeNumber;
-	while (n / 10 != 0) {
-		beforeNumber = n % 10;
-		n = n / 10;
-		if (beforeNumber >= n % 10) {
-			isDecrease = false;
-			break;
-		}
-	}
-	return isDecrease;
-}
+bool a[10];
 int main() {
 	int N;
-	std::cin >> N;
-
-	int count = 0;
-
-	for (long long i = 0; i <= 98765843210; i++) {
-		if (isDecreasing(i)) {
-			count++;
-		}
+	cin >> N;
+	for (int i = 1; i <= 10; i++) {
+		for (int j = 0; j < i; j++)
+			a[9 - j] = true;
+		
+		do {
+			if (N == 0) {
+				for (int k = 0; k < 10; k++) {
+					if (a[k] == true) {
+						cout << 9 - k;
+					}
+				}	
+				return 0;
+			}
+			N--;
+		} while (next_permutation(begin(a), end(a)));
 	}
-
-	std::cout << count;
-
-	return 0;
+	cout << -1;
 }
