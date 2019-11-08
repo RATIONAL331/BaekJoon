@@ -1,116 +1,136 @@
-#include<iostream> 
+#include<iostream>
 #include<vector>
-using namespace std; 
- 
-const int DEL = -987654321;
+#include<deque>
+#include<queue>
+#include<algorithm>
+using namespace std;
+
+int N, M, T;
 
 int SUM;
 int CNT;
 
-int num[55][55]; 
-int bias[55]; 
-int N, M, T;  
+const int INF_MIN = INT32_MIN;
 
-int getNum(int i, int j) {  
-	j += bias[i]; 
-	while (j < 0) 
-		j += M; 
-	j %= M; 
-	return num[i][j];
-} 
-
-void setNum(int i, int j, int v) {
-	j += bias[i]; 
-	while (j < 0)
-		j += M; 
-	j %= M;
-	num[i][j] = v; 
-} 
-
-void solve() { 
-	bool changed = false; 
+void checkAdjacent(vector<deque<int>>& circle) {
 	vector<vector<bool>> isDel(N);
-	for (int i = 0; i < N; i++)
+	for (int i = 0; i < N; i++) 
 		isDel[i].resize(M);
 
-	// 같은 원판에서 확인
-	for (int i = 0; i < N; i++) { 
-		for (int j = 0; j < M; j++) {
-			int a = getNum(i, j); 
-			int b = getNum(i, j + 1); 
-			if (a != DEL && b != DEL && a == b) {
+	bool isChange = false;
+
+	/* 1. 양 옆으로 확인 */
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M - 1; j++) {
+			if (circle[i][j] != INF_MIN && circle[i][j + 1] != INF_MIN && circle[i][j] == circle[i][j + 1]) {
 				isDel[i][j] = true;
 				isDel[i][j + 1] = true;
-				changed = true; 
-			} 
-		} 
-	} 
-	// 다른 원판에서 확인
-	for (int i = 0; i + 1 < N; i++) {
-		for (int j = 0; j < M; j++) {
-			int a = getNum(i, j); 
-			int b = getNum(i + 1, j); 
-			if (a != DEL && b != DEL && a == b) {
+				isChange = true;
+			}
+		}
+		if (circle[i][0] != INF_MIN && circle[i][M - 1] != INF_MIN && circle[i][0] == circle[i][M - 1]) {
+			isDel[i][0] = true;
+			isDel[i][M - 1] = true;
+			isChange = true;
+		}
+	}
+	/* 2. 위 아래로 확인 */
+	for (int j = 0; j < M; j++) {
+		for (int i = 0; i < N - 1; i++) {
+			if (circle[i][j] != INF_MIN && circle[i + 1][j] != INF_MIN && circle[i][j] == circle[i + 1][j]) {
 				isDel[i][j] = true;
 				isDel[i + 1][j] = true;
-				changed = true; 
-			} 
-		} 
-	} 
-
-	// 확인된 값 모두 제거
-	for (int i = 0; i < N; i++) {
-		for (int j = 0; j < M; j++) {
-			if (isDel[i][j] == true) {
-				SUM -= num[i][j];
-				CNT--;
-				setNum(i, j, DEL);
+				isChange = true;
 			}
 		}
 	}
 
-	if (changed == true) 
-		return; 
-
-	// 확인된 것이 없다면 평균보다 큰 값 + 1, 작은값 -1
-	for (int i = 0; i < N; i++) {
-		for (int j = 0; j < M; j++) {
-			if (num[i][j] != DEL) {
-				if (num[i][j] > (double)SUM / CNT) {
-					SUM--;
-					num[i][j]--;
-				}			
-				else if (num[i][j] < (double)SUM / CNT) {
-					SUM++;
-					num[i][j]++;
-				}					
+	if (isChange == true) {
+		/* 3. 변경되었으면 삭제하기 */
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < M; j++) {
+				if (circle[i][j] != INF_MIN && isDel[i][j] == true) {
+					SUM -= circle[i][j];
+					CNT--;
+					circle[i][j] = INF_MIN;
+				}
 			}
 		}
 	}
-} 
+	else {
+		/* 4. 변경 안됬으면 평균 구하고 +1, -1과정 거치기 */
+		double AVG = (double)SUM / CNT;
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < M; j++) {
+				if (circle[i][j] != INF_MIN) {
+					if (circle[i][j] > AVG) {
+						circle[i][j] -= 1;
+						SUM--;
+					}
+					else if(circle[i][j] < AVG) {
+						circle[i][j] += 1;
+						SUM++;
+					}
+				}
+			}
+		}
+	}
+}
+
+void print(vector<deque<int>>& circle) {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			if (circle[i][j] != INF_MIN)
+				cout << circle[i][j] << " ";
+			else cout << "DEL" << " ";
+		}
+		cout << endl;
+	}
+}
+
 int main() {
-	/* INPUT Phase */
-	cin >> N >> M >> T; 
+	/* INIT Phase */
+	cin >> N >> M >> T;
+
+	vector<deque<int>> circle(N);
+
+	int number;
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < M; j++) {
-			cin >> num[i][j]; 
-			SUM += num[i][j];
+			cin >> number;
+			SUM += number;
 			CNT++;
+			circle[i].push_back(number);
 		}
-	} 
+	}
+	
 	/* SOLVE Phase */
+	/* x의 배수 원판을 d의 방향으로(0은 시계, 1은 반시계) k번 회전*/
+	int x; bool d; int k;
 	while (T--) {
-		int x, d, k; 
-		cin >> x >> d >> k; 
-		int v = x; 
-		int shift = k * (d == 0 ? -1 : +1); 
+		cin >> x >> d >> k;
+		for (int i = 1; i * x <= N; i++) {
+			int multiple_x = i * x - 1;
+			for (int rotate = 0; rotate < k; rotate++) {
+				if (d == 0) {
+					int tmp = circle[multiple_x].back();
+					circle[multiple_x].pop_back();
+					circle[multiple_x].push_front(tmp);
+				}
+				else {
+					int tmp = circle[multiple_x].front();
+					circle[multiple_x].pop_front();
+					circle[multiple_x].push_back(tmp);
+				}
 
-		while (v <= N) { 
-			bias[v-1] += shift; 
-			v += x; 
-		} 
-		solve(); 
-	} 
+			}
+		}
+		checkAdjacent(circle);	
+		//print(circle);
+	}
+
 	/* PRINT Phase */
-	cout << SUM; 
-} 
+	cout << SUM;
+
+	return 0;
+}
