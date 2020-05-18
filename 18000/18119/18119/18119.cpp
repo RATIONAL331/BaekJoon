@@ -1,12 +1,17 @@
 #include<iostream>
 #include<string>
 #include<vector>
-#include<map>
+#include<bitset>
 using namespace std;
 
 int N, M;
-vector<map<char, int>> wordList;
+vector<bitset<26>> wordList;
+vector<bitset<26>> copyWordList;
 int main() {
+	ios_base::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+
 	cin >> N >> M;
 	wordList.resize(N);
 
@@ -14,8 +19,10 @@ int main() {
 	for (int i = 0; i < N; i++) {
 		cin >> str;
 		for (char c : str)
-			wordList[i][c] = 1;
+			wordList[i][(size_t)c - 'a'] = true;
 	}
+
+	copyWordList = wordList;
 
 	int op;
 	char x;
@@ -23,27 +30,20 @@ int main() {
 		cin >> op >> x;
 		if (op == 1) {
 			for (int i = 0; i < N; i++) {
-				// wordList에 알파벳이 존재한다면 감소시키고 아니면 무시한다.
-				if(wordList[i].find(x) != wordList[i].end())
-					wordList[i][x] = 0;
-			}	
+				if (copyWordList[i][(size_t)x - 'a'] == true)
+					wordList[i][(size_t)x - 'a'] = false;
+			}
 		}
 		else {
-			for (int i = 0; i < N; i++)
-				// wordList에 알파벳이 존재한다면 증가시키고 아니면 무시한다.
-				if (wordList[i].find(x) != wordList[i].end())
-					wordList[i][x] = 1;
+			for (int i = 0; i < N; i++) {
+				if (copyWordList[i][(size_t)x - 'a'] == true)
+					wordList[i][(size_t)x - 'a'] = true;
+			}
 		}
-
 		int cnt = 0;
 		for (int i = 0; i < N; i++) {
-			cnt++;
-			for (const auto& elem : wordList[i]) {
-				if (elem.second == 0) {
-					cnt--;
-					break;
-				}			
-			}		
+			if (copyWordList[i] == wordList[i])
+				cnt++;
 		}
 		cout << cnt << '\n';
 	}
