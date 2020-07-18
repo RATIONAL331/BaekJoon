@@ -26,13 +26,13 @@ void dropping(vector<vector<int>>& board) {
 	for (int i = 5; i >= 0; i--) {
 		for (int j = 0; j < 4; j++) {
 			if (board[i][j] != 0) {
-				int type = board[i][j]; 
-				int savedI = i; 
+				int type = board[i][j];
+				int savedI = i;
 				int	savedJ = j;
 				if (type == 1 || type == 3) {
 					while (savedI + 1 <= 5 && board[savedI + 1][savedJ] == 0)
 						savedI++;
-					
+
 					board[i][j] = 0;
 					board[savedI][savedJ] = type;
 					if (i != 0 && type == 3 && board[i - 1][j] == 3) {
@@ -83,10 +83,6 @@ void holding(vector<vector<int>>& board, int t, int x, int y) {
 }
 
 int main() {
-	ios_base::sync_with_stdio(false);
-	cin.tie(nullptr);
-	cout.tie(nullptr);
-
 	vector<vector<int>> greenBoard, blueBoard;
 	greenBoard.resize(6);
 	blueBoard.resize(6);
