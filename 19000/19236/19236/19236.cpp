@@ -13,14 +13,12 @@ bool boundaryCheck(int x, int y) {
     return x >= 0 && x < 4 && y >= 0 && y < 4;
 }
 
-void dfs(const vector<vector<pair<int, int>>>& board, int row, int col, int sum) {
-    vector<vector<pair<int, int>>> copyBoard;
-    copyBoard = board;
+void dfs(vector<vector<pair<int, int>>> board, int row, int col, int sum) {
     // 상어 잡아먹기
-    sum += copyBoard[row][col].first;
-    copyBoard[row][col].first = 0;
-    int dir = copyBoard[row][col].second;
-    copyBoard[row][col].second = 0;
+    sum += board[row][col].first;
+    board[row][col].first = 0;
+    int dir = board[row][col].second;
+    board[row][col].second = 0;
 
     RESULT = max(RESULT, sum);
     // 물고기 움직이기
@@ -28,8 +26,8 @@ void dfs(const vector<vector<pair<int, int>>>& board, int row, int col, int sum)
         bool isFind = false;
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                if (!isFind && copyBoard[i][j].first == num) {
-                    int& newDir = copyBoard[i][j].second;
+                if (!isFind && board[i][j].first == num) {
+                    int& newDir = board[i][j].second;
 
                     while (!(boundaryCheck(i + dx[newDir], j + dy[newDir]))
                         || (i + dx[newDir] == row && j + dy[newDir] == col))
@@ -39,7 +37,7 @@ void dfs(const vector<vector<pair<int, int>>>& board, int row, int col, int sum)
                         if (newDir == 9)
                             newDir = 1;
                     }
-                    swap(copyBoard[i][j], copyBoard[i + dx[newDir]][j + dy[newDir]]);
+                    swap(board[i][j], board[i + dx[newDir]][j + dy[newDir]]);
                     isFind = true;
                 }
                 if (isFind) break;
@@ -51,8 +49,8 @@ void dfs(const vector<vector<pair<int, int>>>& board, int row, int col, int sum)
     row += dx[dir];
     col += dy[dir];
     while (boundaryCheck(row, col)) {
-        if (copyBoard[row][col].first != 0)
-            dfs(copyBoard, row, col, sum);
+        if (board[row][col].first != 0)
+            dfs(board, row, col, sum);
 
         row += dx[dir];
         col += dy[dir];

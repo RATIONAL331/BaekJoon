@@ -117,20 +117,6 @@ int sendPassenger(int idx) {
 	return -1;
 }
 
-int solve() {
-	for (int i = 0; i < M; ++i) {
-		Info info = findPassenger();
-		initGas -= info.distance;
-		if (info.idx == -1 || initGas < 0) return -1;
-
-		int distance = sendPassenger(info.idx);
-		initGas -= distance;
-		if (distance == -1 || initGas < 0) return -1;
-		initGas += distance * 2;
-	}
-	return initGas;
-}
-
 int main() {
 	cin >> N >> M >> initGas;
 	board.resize(N);
@@ -155,6 +141,23 @@ int main() {
 		board[x1 - 1][y1 - 1] = i + 1;
 	}
 
-	cout << solve() << endl;
+	while (M--) {
+		Info info = findPassenger();
+		initGas -= info.distance;
+		if (info.idx == -1 || initGas < 0) {
+			initGas = -1;
+			break;
+		}
+
+		int distance = sendPassenger(info.idx);
+		initGas -= distance;
+		if (distance == -1 || initGas < 0) {
+			initGas = -1;
+			break;
+		}
+		initGas += distance * 2;
+	}
+
+	cout << initGas;
 	return 0;
 }
